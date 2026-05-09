@@ -17,6 +17,12 @@ function QDetail() {
   const { id } = Route.useParams();
   const [q, setQ] = useState<any>(null);
   const [questions, setQuestions] = useState<any[]>([]);
+  const [editMeta, setEditMeta] = useState(false);
+  const [metaTitle, setMetaTitle] = useState("");
+  const [metaDesc, setMetaDesc] = useState("");
+  const [editingId, setEditingId] = useState<string | null>(null);
+  const [editText, setEditText] = useState("");
+  const [editOptions, setEditOptions] = useState<string[]>([]);
   const [open, setOpen] = useState(false);
   const [type, setType] = useState<"multiple_choice" | "essay">("multiple_choice");
   const [text, setText] = useState("");
