@@ -174,7 +174,9 @@ function QDetail() {
       </div>
 
       <div className="space-y-3">
-        {questions.map((qq, i) => (
+        {questions.map((qq, i) => {
+          const isEditing = editingId === qq.id;
+          return (
           <Card key={qq.id} className="bg-card-gradient p-4 shadow-card">
             <div className="flex items-start justify-between gap-3">
               <div className="min-w-0 flex-1">
@@ -184,17 +186,37 @@ function QDetail() {
                     {qq.type === "multiple_choice" ? "Pilihan ganda" : "Esai"}
                   </span>
                 </div>
-                <p className="mt-2 font-medium">{qq.text}</p>
-                {qq.options && (
-                  <ul className="mt-2 space-y-1 text-sm text-muted-foreground">
-                    {(qq.options as string[]).map((o,j) => <li key={j}>• {o}</li>)}
-                  </ul>
+                {isEditing ? (
+                  <div className="mt-2 space-y-2">
+                    <Textarea value={editText} onChange={e=>setEditText(e.target.value)} />
+                    {qq.type === "multiple_choice" && editOptions.map((o, j) => (
+                      <Input key={j} value={o} onChange={e=>{ const n=[...editOptions]; n[j]=e.target.value; setEditOptions(n); }} placeholder={`Opsi ${j+1}`} />
+                    ))}
+                    <div className="flex gap-2">
+                      <Button size="sm" onClick={()=>saveEdit(qq)} className="gap-1"><Save className="h-3.5 w-3.5" /> Simpan</Button>
+                      <Button size="sm" variant="ghost" onClick={()=>setEditingId(null)} className="gap-1"><X className="h-3.5 w-3.5" /> Batal</Button>
+                    </div>
+                  </div>
+                ) : (
+                  <>
+                    <p className="mt-2 font-medium">{qq.text}</p>
+                    {qq.options && (
+                      <ul className="mt-2 space-y-1 text-sm text-muted-foreground">
+                        {(qq.options as string[]).map((o,j) => <li key={j}>• {o}</li>)}
+                      </ul>
+                    )}
+                  </>
                 )}
               </div>
-              <Button size="icon" variant="ghost" onClick={() => delQuestion(qq.id)}><Trash2 className="h-4 w-4 text-destructive" /></Button>
+              {!isEditing && (
+                <div className="flex flex-col gap-1">
+                  <Button size="icon" variant="ghost" onClick={()=>startEdit(qq)}><Pencil className="h-4 w-4" /></Button>
+                  <Button size="icon" variant="ghost" onClick={() => delQuestion(qq.id)}><Trash2 className="h-4 w-4 text-destructive" /></Button>
+                </div>
+              )}
             </div>
           </Card>
-        ))}
+        );})}
         {questions.length === 0 && <Card className="p-10 text-center text-sm text-muted-foreground">Belum ada soal. Tambahkan manual atau buat ulang dengan AI.</Card>}
       </div>
     </div>
