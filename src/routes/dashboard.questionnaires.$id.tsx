@@ -8,7 +8,7 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogFooter } from "@/components/ui/dialog";
-import { Plus, Trash2, ArrowLeft, Copy } from "lucide-react";
+import { Plus, Trash2, ArrowLeft, Copy, Pencil, Save, X } from "lucide-react";
 import { toast } from "sonner";
 
 export const Route = createFileRoute("/dashboard/questionnaires/$id")({ component: QDetail });
