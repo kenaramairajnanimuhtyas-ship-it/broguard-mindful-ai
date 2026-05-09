@@ -4,8 +4,10 @@ import { supabase } from "@/integrations/supabase/client";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { riskBadge } from "@/lib/broguard";
-import { ArrowLeft, Loader2, Sparkles } from "lucide-react";
+import { ArrowLeft, Loader2, Sparkles, Download } from "lucide-react";
 import { toast } from "sonner";
+import { jsPDF } from "jspdf";
+import { format } from "date-fns";
 
 export const Route = createFileRoute("/dashboard/results/$sessionId")({ component: Detail });
 
@@ -33,6 +35,55 @@ function Detail() {
     } catch (e: any) { toast.error(e.message); } finally { setBusy(false); }
   }
 
+  function exportPDF() {
+    if (!data) return;
+    const a = data.analysis?.[0];
+    const doc = new jsPDF({ unit: "pt", format: "a4" });
+    const pageW = doc.internal.pageSize.getWidth();
+    const margin = 48;
+    let y = margin;
+    const writeLine = (t: string, opts: { size?: number; bold?: boolean; color?: [number, number, number]; gap?: number } = {}) => {
+      doc.setFont("helvetica", opts.bold ? "bold" : "normal");
+      doc.setFontSize(opts.size ?? 11);
+      doc.setTextColor(...(opts.color ?? [30, 30, 30] as [number, number, number]));
+      const lines = doc.splitTextToSize(t, pageW - margin * 2);
+      lines.forEach((ln: string) => {
+        if (y > 780) { doc.addPage(); y = margin; }
+        doc.text(ln, margin, y);
+        y += (opts.size ?? 11) * 1.35;
+      });
+      y += opts.gap ?? 0;
+    };
+
+    writeLine("BroGuardAI", { size: 10, color: [120, 120, 120] });
+    writeLine("Laporan Analisis Risiko Psikologis", { size: 18, bold: true, gap: 8 });
+    writeLine(`Nama   : ${data.student_name}`);
+    writeLine(`Kelas  : ${data.student_class || "-"}    NIS: ${data.student_nis || "-"}`);
+    writeLine(`Kuesioner: ${data.questionnaire?.title || "-"}`);
+    writeLine(`Tanggal: ${format(new Date(data.created_at), "dd MMM yyyy HH:mm")}`, { gap: 12 });
+
+    if (a) {
+      const labels: Record<string, string> = { rendah: "Risiko Rendah", sedang: "Risiko Sedang", tinggi: "Risiko Tinggi", sangat_tinggi: "Risiko Sangat Tinggi" };
+      writeLine(`Tingkat Risiko: ${labels[a.risk_level] || a.risk_level}`, { bold: true, size: 13 });
+      writeLine(`Skor Risiko: ${a.risk_score} / 100`, { bold: true, gap: 10 });
+      writeLine("Ringkasan", { bold: true, size: 13 });
+      writeLine(a.summary || "-", { gap: 8 });
+      writeLine("Rekomendasi", { bold: true, size: 13 });
+      writeLine(a.recommendations || "-", { gap: 12 });
+    } else {
+      writeLine("Analisis belum tersedia.", { gap: 12 });
+    }
+
+    writeLine("Jawaban Siswa", { bold: true, size: 13, gap: 4 });
+    responses.forEach((r: any, i: number) => {
+      writeLine(`${i + 1}. ${r.question?.text || ""}`, { bold: true });
+      writeLine(`Jawab: ${r.answer || "(kosong)"}`, { gap: 6 });
+    });
+
+    const safeName = data.student_name.replace(/[^a-z0-9]+/gi, "_");
+    doc.save(`BroGuardAI_${safeName}_${sessionId.slice(0, 6)}.pdf`);
+  }
+
   if (!data) return <p>Memuat...</p>;
   const a = data.analysis?.[0];
   const b = a ? riskBadge(a.risk_level) : null;
@@ -49,7 +100,10 @@ function Detail() {
             <p className="text-sm text-muted-foreground">{data.student_class || "-"} · NIS {data.student_nis || "-"}</p>
             <p className="mt-1 text-sm">Kuesioner: <span className="font-medium">{data.questionnaire?.title}</span></p>
           </div>
-          <Button size="sm" variant="outline" onClick={reanalyze} disabled={busy} className="gap-2">{busy ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <Sparkles className="h-3.5 w-3.5" />} Analisis ulang</Button>
+          <div className="flex flex-wrap gap-2">
+            <Button size="sm" variant="outline" onClick={exportPDF} className="gap-2"><Download className="h-3.5 w-3.5" /> Ekspor PDF</Button>
+            <Button size="sm" variant="outline" onClick={reanalyze} disabled={busy} className="gap-2">{busy ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <Sparkles className="h-3.5 w-3.5" />} Analisis ulang</Button>
+          </div>
         </div>
       </Card>
 

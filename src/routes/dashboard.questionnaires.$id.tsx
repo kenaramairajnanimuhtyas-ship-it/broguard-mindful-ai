@@ -8,7 +8,7 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogFooter } from "@/components/ui/dialog";
-import { Plus, Trash2, ArrowLeft, Copy } from "lucide-react";
+import { Plus, Trash2, ArrowLeft, Copy, Pencil, Save, X } from "lucide-react";
 import { toast } from "sonner";
 
 export const Route = createFileRoute("/dashboard/questionnaires/$id")({ component: QDetail });
@@ -17,6 +17,12 @@ function QDetail() {
   const { id } = Route.useParams();
   const [q, setQ] = useState<any>(null);
   const [questions, setQuestions] = useState<any[]>([]);
+  const [editMeta, setEditMeta] = useState(false);
+  const [metaTitle, setMetaTitle] = useState("");
+  const [metaDesc, setMetaDesc] = useState("");
+  const [editingId, setEditingId] = useState<string | null>(null);
+  const [editText, setEditText] = useState("");
+  const [editOptions, setEditOptions] = useState<string[]>([]);
   const [open, setOpen] = useState(false);
   const [type, setType] = useState<"multiple_choice" | "essay">("multiple_choice");
   const [text, setText] = useState("");
@@ -54,6 +60,34 @@ function QDetail() {
     await load();
   }
 
+  function startEdit(qq: any) {
+    setEditingId(qq.id);
+    setEditText(qq.text);
+    setEditOptions(qq.options ? [...qq.options] : []);
+  }
+  async function saveEdit(qq: any) {
+    if (!editText.trim()) return toast.error("Pertanyaan kosong");
+    const payload: any = { text: editText };
+    if (qq.type === "multiple_choice") {
+      if (editOptions.some(o => !o.trim())) return toast.error("Lengkapi semua opsi");
+      payload.options = editOptions;
+    }
+    const { error } = await supabase.from("questions").update(payload).eq("id", qq.id);
+    if (error) return toast.error(error.message);
+    setEditingId(null);
+    toast.success("Soal disimpan");
+    await load();
+  }
+
+  async function saveMeta() {
+    if (!metaTitle.trim()) return toast.error("Judul wajib");
+    const { error } = await supabase.from("questionnaires").update({ title: metaTitle, description: metaDesc }).eq("id", id);
+    if (error) return toast.error(error.message);
+    setEditMeta(false);
+    toast.success("Kuesioner disimpan");
+    await load();
+  }
+
   async function toggleStatus() {
     const next = q.status === "active" ? "inactive" : "active";
     await supabase.from("questionnaires").update({ status: next }).eq("id", id);
@@ -77,11 +111,25 @@ function QDetail() {
 
       <Card className="bg-card-gradient p-6 shadow-card">
         <div className="flex flex-wrap items-start justify-between gap-3">
-          <div>
-            <h1 className="font-display text-2xl font-bold">{q.title}</h1>
-            <p className="mt-1 text-sm text-muted-foreground">{q.description}</p>
+          <div className="min-w-0 flex-1">
+            {editMeta ? (
+              <div className="space-y-2">
+                <Input value={metaTitle} onChange={e=>setMetaTitle(e.target.value)} className="font-display text-xl font-bold" />
+                <Textarea value={metaDesc} onChange={e=>setMetaDesc(e.target.value)} rows={2} />
+                <div className="flex gap-2">
+                  <Button size="sm" onClick={saveMeta} className="gap-1"><Save className="h-3.5 w-3.5" /> Simpan</Button>
+                  <Button size="sm" variant="ghost" onClick={()=>setEditMeta(false)}>Batal</Button>
+                </div>
+              </div>
+            ) : (
+              <>
+                <h1 className="font-display text-2xl font-bold">{q.title}</h1>
+                <p className="mt-1 text-sm text-muted-foreground">{q.description}</p>
+              </>
+            )}
           </div>
           <div className="flex items-center gap-2">
+            {!editMeta && <Button size="sm" variant="ghost" onClick={()=>{ setMetaTitle(q.title); setMetaDesc(q.description||""); setEditMeta(true); }}><Pencil className="h-4 w-4" /></Button>}
             <code className="rounded-lg bg-background px-3 py-1.5 text-base font-semibold tracking-wider">{q.access_code}</code>
             <Button size="sm" variant="ghost" onClick={copyLink}><Copy className="h-4 w-4" /></Button>
             <Button size="sm" variant="outline" onClick={toggleStatus}>{q.status === "active" ? "Nonaktifkan" : "Aktifkan"}</Button>
@@ -126,7 +174,9 @@ function QDetail() {
       </div>
 
       <div className="space-y-3">
-        {questions.map((qq, i) => (
+        {questions.map((qq, i) => {
+          const isEditing = editingId === qq.id;
+          return (
           <Card key={qq.id} className="bg-card-gradient p-4 shadow-card">
             <div className="flex items-start justify-between gap-3">
               <div className="min-w-0 flex-1">
@@ -136,17 +186,37 @@ function QDetail() {
                     {qq.type === "multiple_choice" ? "Pilihan ganda" : "Esai"}
                   </span>
                 </div>
-                <p className="mt-2 font-medium">{qq.text}</p>
-                {qq.options && (
-                  <ul className="mt-2 space-y-1 text-sm text-muted-foreground">
-                    {(qq.options as string[]).map((o,j) => <li key={j}>• {o}</li>)}
-                  </ul>
+                {isEditing ? (
+                  <div className="mt-2 space-y-2">
+                    <Textarea value={editText} onChange={e=>setEditText(e.target.value)} />
+                    {qq.type === "multiple_choice" && editOptions.map((o, j) => (
+                      <Input key={j} value={o} onChange={e=>{ const n=[...editOptions]; n[j]=e.target.value; setEditOptions(n); }} placeholder={`Opsi ${j+1}`} />
+                    ))}
+                    <div className="flex gap-2">
+                      <Button size="sm" onClick={()=>saveEdit(qq)} className="gap-1"><Save className="h-3.5 w-3.5" /> Simpan</Button>
+                      <Button size="sm" variant="ghost" onClick={()=>setEditingId(null)} className="gap-1"><X className="h-3.5 w-3.5" /> Batal</Button>
+                    </div>
+                  </div>
+                ) : (
+                  <>
+                    <p className="mt-2 font-medium">{qq.text}</p>
+                    {qq.options && (
+                      <ul className="mt-2 space-y-1 text-sm text-muted-foreground">
+                        {(qq.options as string[]).map((o,j) => <li key={j}>• {o}</li>)}
+                      </ul>
+                    )}
+                  </>
                 )}
               </div>
-              <Button size="icon" variant="ghost" onClick={() => delQuestion(qq.id)}><Trash2 className="h-4 w-4 text-destructive" /></Button>
+              {!isEditing && (
+                <div className="flex flex-col gap-1">
+                  <Button size="icon" variant="ghost" onClick={()=>startEdit(qq)}><Pencil className="h-4 w-4" /></Button>
+                  <Button size="icon" variant="ghost" onClick={() => delQuestion(qq.id)}><Trash2 className="h-4 w-4 text-destructive" /></Button>
+                </div>
+              )}
             </div>
           </Card>
-        ))}
+        );})}
         {questions.length === 0 && <Card className="p-10 text-center text-sm text-muted-foreground">Belum ada soal. Tambahkan manual atau buat ulang dengan AI.</Card>}
       </div>
     </div>
