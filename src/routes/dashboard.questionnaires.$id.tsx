@@ -60,6 +60,40 @@ function QDetail() {
     await load();
   }
 
+  async function delQuestion(qid: string) {
+    if (!confirm("Hapus soal ini?")) return;
+    await supabase.from("questions").delete().eq("id", qid);
+    await load();
+  }
+
+  function startEdit(qq: any) {
+    setEditingId(qq.id);
+    setEditText(qq.text);
+    setEditOptions(qq.options ? [...qq.options] : []);
+  }
+  async function saveEdit(qq: any) {
+    if (!editText.trim()) return toast.error("Pertanyaan kosong");
+    const payload: any = { text: editText };
+    if (qq.type === "multiple_choice") {
+      if (editOptions.some(o => !o.trim())) return toast.error("Lengkapi semua opsi");
+      payload.options = editOptions;
+    }
+    const { error } = await supabase.from("questions").update(payload).eq("id", qq.id);
+    if (error) return toast.error(error.message);
+    setEditingId(null);
+    toast.success("Soal disimpan");
+    await load();
+  }
+
+  async function saveMeta() {
+    if (!metaTitle.trim()) return toast.error("Judul wajib");
+    const { error } = await supabase.from("questionnaires").update({ title: metaTitle, description: metaDesc }).eq("id", id);
+    if (error) return toast.error(error.message);
+    setEditMeta(false);
+    toast.success("Kuesioner disimpan");
+    await load();
+  }
+
   async function toggleStatus() {
     const next = q.status === "active" ? "inactive" : "active";
     await supabase.from("questionnaires").update({ status: next }).eq("id", id);
