@@ -13,9 +13,11 @@ import { Route as DashboardRouteImport } from './routes/dashboard'
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as DashboardIndexRouteImport } from './routes/dashboard.index'
+import { Route as QCodeRouteImport } from './routes/q.$code'
 import { Route as DashboardStudentsRouteImport } from './routes/dashboard.students'
 import { Route as DashboardResultsRouteImport } from './routes/dashboard.results'
 import { Route as DashboardQuestionnairesRouteImport } from './routes/dashboard.questionnaires'
+import { Route as QCodeDoneRouteImport } from './routes/q.$code.done'
 import { Route as DashboardResultsSessionIdRouteImport } from './routes/dashboard.results.$sessionId'
 import { Route as DashboardQuestionnairesIdRouteImport } from './routes/dashboard.questionnaires.$id'
 
@@ -39,6 +41,11 @@ const DashboardIndexRoute = DashboardIndexRouteImport.update({
   path: '/',
   getParentRoute: () => DashboardRoute,
 } as any)
+const QCodeRoute = QCodeRouteImport.update({
+  id: '/q/$code',
+  path: '/q/$code',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const DashboardStudentsRoute = DashboardStudentsRouteImport.update({
   id: '/students',
   path: '/students',
@@ -53,6 +60,11 @@ const DashboardQuestionnairesRoute = DashboardQuestionnairesRouteImport.update({
   id: '/questionnaires',
   path: '/questionnaires',
   getParentRoute: () => DashboardRoute,
+} as any)
+const QCodeDoneRoute = QCodeDoneRouteImport.update({
+  id: '/done',
+  path: '/done',
+  getParentRoute: () => QCodeRoute,
 } as any)
 const DashboardResultsSessionIdRoute =
   DashboardResultsSessionIdRouteImport.update({
@@ -74,9 +86,11 @@ export interface FileRoutesByFullPath {
   '/dashboard/questionnaires': typeof DashboardQuestionnairesRouteWithChildren
   '/dashboard/results': typeof DashboardResultsRouteWithChildren
   '/dashboard/students': typeof DashboardStudentsRoute
+  '/q/$code': typeof QCodeRouteWithChildren
   '/dashboard/': typeof DashboardIndexRoute
   '/dashboard/questionnaires/$id': typeof DashboardQuestionnairesIdRoute
   '/dashboard/results/$sessionId': typeof DashboardResultsSessionIdRoute
+  '/q/$code/done': typeof QCodeDoneRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -84,9 +98,11 @@ export interface FileRoutesByTo {
   '/dashboard/questionnaires': typeof DashboardQuestionnairesRouteWithChildren
   '/dashboard/results': typeof DashboardResultsRouteWithChildren
   '/dashboard/students': typeof DashboardStudentsRoute
+  '/q/$code': typeof QCodeRouteWithChildren
   '/dashboard': typeof DashboardIndexRoute
   '/dashboard/questionnaires/$id': typeof DashboardQuestionnairesIdRoute
   '/dashboard/results/$sessionId': typeof DashboardResultsSessionIdRoute
+  '/q/$code/done': typeof QCodeDoneRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -96,9 +112,11 @@ export interface FileRoutesById {
   '/dashboard/questionnaires': typeof DashboardQuestionnairesRouteWithChildren
   '/dashboard/results': typeof DashboardResultsRouteWithChildren
   '/dashboard/students': typeof DashboardStudentsRoute
+  '/q/$code': typeof QCodeRouteWithChildren
   '/dashboard/': typeof DashboardIndexRoute
   '/dashboard/questionnaires/$id': typeof DashboardQuestionnairesIdRoute
   '/dashboard/results/$sessionId': typeof DashboardResultsSessionIdRoute
+  '/q/$code/done': typeof QCodeDoneRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -109,9 +127,11 @@ export interface FileRouteTypes {
     | '/dashboard/questionnaires'
     | '/dashboard/results'
     | '/dashboard/students'
+    | '/q/$code'
     | '/dashboard/'
     | '/dashboard/questionnaires/$id'
     | '/dashboard/results/$sessionId'
+    | '/q/$code/done'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -119,9 +139,11 @@ export interface FileRouteTypes {
     | '/dashboard/questionnaires'
     | '/dashboard/results'
     | '/dashboard/students'
+    | '/q/$code'
     | '/dashboard'
     | '/dashboard/questionnaires/$id'
     | '/dashboard/results/$sessionId'
+    | '/q/$code/done'
   id:
     | '__root__'
     | '/'
@@ -130,15 +152,18 @@ export interface FileRouteTypes {
     | '/dashboard/questionnaires'
     | '/dashboard/results'
     | '/dashboard/students'
+    | '/q/$code'
     | '/dashboard/'
     | '/dashboard/questionnaires/$id'
     | '/dashboard/results/$sessionId'
+    | '/q/$code/done'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AuthRoute: typeof AuthRoute
   DashboardRoute: typeof DashboardRouteWithChildren
+  QCodeRoute: typeof QCodeRouteWithChildren
 }
 
 declare module '@tanstack/react-router' {
@@ -171,6 +196,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof DashboardIndexRouteImport
       parentRoute: typeof DashboardRoute
     }
+    '/q/$code': {
+      id: '/q/$code'
+      path: '/q/$code'
+      fullPath: '/q/$code'
+      preLoaderRoute: typeof QCodeRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/dashboard/students': {
       id: '/dashboard/students'
       path: '/students'
@@ -191,6 +223,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/dashboard/questionnaires'
       preLoaderRoute: typeof DashboardQuestionnairesRouteImport
       parentRoute: typeof DashboardRoute
+    }
+    '/q/$code/done': {
+      id: '/q/$code/done'
+      path: '/done'
+      fullPath: '/q/$code/done'
+      preLoaderRoute: typeof QCodeDoneRouteImport
+      parentRoute: typeof QCodeRoute
     }
     '/dashboard/results/$sessionId': {
       id: '/dashboard/results/$sessionId'
@@ -252,10 +291,21 @@ const DashboardRouteWithChildren = DashboardRoute._addFileChildren(
   DashboardRouteChildren,
 )
 
+interface QCodeRouteChildren {
+  QCodeDoneRoute: typeof QCodeDoneRoute
+}
+
+const QCodeRouteChildren: QCodeRouteChildren = {
+  QCodeDoneRoute: QCodeDoneRoute,
+}
+
+const QCodeRouteWithChildren = QCodeRoute._addFileChildren(QCodeRouteChildren)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AuthRoute: AuthRoute,
   DashboardRoute: DashboardRouteWithChildren,
+  QCodeRoute: QCodeRouteWithChildren,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
