@@ -7,21 +7,38 @@ import { riskBadge } from "@/lib/broguard";
 
 export const Route = createFileRoute("/dashboard/")({ component: Overview });
 
+type ClassRow = { className: string; total: number; avg: number; rendah: number; sedang: number; tinggi: number; sangat_tinggi: number };
+
 function Overview() {
   const [stats, setStats] = useState({ students: 0, questionnaires: 0, sessions: 0, highRisk: 0 });
   const [recent, setRecent] = useState<any[]>([]);
+  const [classRows, setClassRows] = useState<ClassRow[]>([]);
 
   useEffect(() => { void load(); }, []);
   async function load() {
-    const [s, q, ses, hr, rec] = await Promise.all([
+    const [s, q, ses, hr, rec, perClass] = await Promise.all([
       supabase.from("students").select("*", { count: "exact", head: true }),
       supabase.from("questionnaires").select("*", { count: "exact", head: true }),
       supabase.from("sessions").select("*", { count: "exact", head: true }),
       supabase.from("analyses").select("*", { count: "exact", head: true }).in("risk_level", ["tinggi", "sangat_tinggi"]),
       supabase.from("analyses").select("id, risk_level, risk_score, created_at, session:sessions(id, student_name, student_class, questionnaire:questionnaires(title))").order("created_at", { ascending: false }).limit(6),
+      supabase.from("analyses").select("risk_level, risk_score, session:sessions!inner(student_class)"),
     ]);
     setStats({ students: s.count ?? 0, questionnaires: q.count ?? 0, sessions: ses.count ?? 0, highRisk: hr.count ?? 0 });
     setRecent(rec.data ?? []);
+
+    const map = new Map<string, ClassRow>();
+    (perClass.data ?? []).forEach((r: any) => {
+      const cls = r.session?.student_class?.trim() || "Tanpa kelas";
+      const row = map.get(cls) ?? { className: cls, total: 0, avg: 0, rendah: 0, sedang: 0, tinggi: 0, sangat_tinggi: 0 };
+      row.total += 1;
+      row.avg += r.risk_score || 0;
+      if (row[r.risk_level as keyof ClassRow] !== undefined) (row as any)[r.risk_level] += 1;
+      map.set(cls, row);
+    });
+    const rows = Array.from(map.values()).map(r => ({ ...r, avg: r.total ? Math.round(r.avg / r.total) : 0 }));
+    rows.sort((a, b) => (b.tinggi + b.sangat_tinggi) - (a.tinggi + a.sangat_tinggi) || b.avg - a.avg);
+    setClassRows(rows);
   }
 
   return (
