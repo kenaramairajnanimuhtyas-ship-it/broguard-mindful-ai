@@ -13,7 +13,11 @@ import { Route as DashboardRouteImport } from './routes/dashboard'
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as DashboardIndexRouteImport } from './routes/dashboard.index'
+import { Route as DashboardStudentsRouteImport } from './routes/dashboard.students'
+import { Route as DashboardResultsRouteImport } from './routes/dashboard.results'
 import { Route as DashboardQuestionnairesRouteImport } from './routes/dashboard.questionnaires'
+import { Route as DashboardResultsSessionIdRouteImport } from './routes/dashboard.results.$sessionId'
+import { Route as DashboardQuestionnairesIdRouteImport } from './routes/dashboard.questionnaires.$id'
 
 const DashboardRoute = DashboardRouteImport.update({
   id: '/dashboard',
@@ -35,32 +39,66 @@ const DashboardIndexRoute = DashboardIndexRouteImport.update({
   path: '/',
   getParentRoute: () => DashboardRoute,
 } as any)
+const DashboardStudentsRoute = DashboardStudentsRouteImport.update({
+  id: '/students',
+  path: '/students',
+  getParentRoute: () => DashboardRoute,
+} as any)
+const DashboardResultsRoute = DashboardResultsRouteImport.update({
+  id: '/results',
+  path: '/results',
+  getParentRoute: () => DashboardRoute,
+} as any)
 const DashboardQuestionnairesRoute = DashboardQuestionnairesRouteImport.update({
   id: '/questionnaires',
   path: '/questionnaires',
   getParentRoute: () => DashboardRoute,
 } as any)
+const DashboardResultsSessionIdRoute =
+  DashboardResultsSessionIdRouteImport.update({
+    id: '/$sessionId',
+    path: '/$sessionId',
+    getParentRoute: () => DashboardResultsRoute,
+  } as any)
+const DashboardQuestionnairesIdRoute =
+  DashboardQuestionnairesIdRouteImport.update({
+    id: '/$id',
+    path: '/$id',
+    getParentRoute: () => DashboardQuestionnairesRoute,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
   '/dashboard': typeof DashboardRouteWithChildren
-  '/dashboard/questionnaires': typeof DashboardQuestionnairesRoute
+  '/dashboard/questionnaires': typeof DashboardQuestionnairesRouteWithChildren
+  '/dashboard/results': typeof DashboardResultsRouteWithChildren
+  '/dashboard/students': typeof DashboardStudentsRoute
   '/dashboard/': typeof DashboardIndexRoute
+  '/dashboard/questionnaires/$id': typeof DashboardQuestionnairesIdRoute
+  '/dashboard/results/$sessionId': typeof DashboardResultsSessionIdRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
-  '/dashboard/questionnaires': typeof DashboardQuestionnairesRoute
+  '/dashboard/questionnaires': typeof DashboardQuestionnairesRouteWithChildren
+  '/dashboard/results': typeof DashboardResultsRouteWithChildren
+  '/dashboard/students': typeof DashboardStudentsRoute
   '/dashboard': typeof DashboardIndexRoute
+  '/dashboard/questionnaires/$id': typeof DashboardQuestionnairesIdRoute
+  '/dashboard/results/$sessionId': typeof DashboardResultsSessionIdRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
   '/dashboard': typeof DashboardRouteWithChildren
-  '/dashboard/questionnaires': typeof DashboardQuestionnairesRoute
+  '/dashboard/questionnaires': typeof DashboardQuestionnairesRouteWithChildren
+  '/dashboard/results': typeof DashboardResultsRouteWithChildren
+  '/dashboard/students': typeof DashboardStudentsRoute
   '/dashboard/': typeof DashboardIndexRoute
+  '/dashboard/questionnaires/$id': typeof DashboardQuestionnairesIdRoute
+  '/dashboard/results/$sessionId': typeof DashboardResultsSessionIdRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -69,16 +107,32 @@ export interface FileRouteTypes {
     | '/auth'
     | '/dashboard'
     | '/dashboard/questionnaires'
+    | '/dashboard/results'
+    | '/dashboard/students'
     | '/dashboard/'
+    | '/dashboard/questionnaires/$id'
+    | '/dashboard/results/$sessionId'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/auth' | '/dashboard/questionnaires' | '/dashboard'
+  to:
+    | '/'
+    | '/auth'
+    | '/dashboard/questionnaires'
+    | '/dashboard/results'
+    | '/dashboard/students'
+    | '/dashboard'
+    | '/dashboard/questionnaires/$id'
+    | '/dashboard/results/$sessionId'
   id:
     | '__root__'
     | '/'
     | '/auth'
     | '/dashboard'
     | '/dashboard/questionnaires'
+    | '/dashboard/results'
+    | '/dashboard/students'
     | '/dashboard/'
+    | '/dashboard/questionnaires/$id'
+    | '/dashboard/results/$sessionId'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -117,6 +171,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof DashboardIndexRouteImport
       parentRoute: typeof DashboardRoute
     }
+    '/dashboard/students': {
+      id: '/dashboard/students'
+      path: '/students'
+      fullPath: '/dashboard/students'
+      preLoaderRoute: typeof DashboardStudentsRouteImport
+      parentRoute: typeof DashboardRoute
+    }
+    '/dashboard/results': {
+      id: '/dashboard/results'
+      path: '/results'
+      fullPath: '/dashboard/results'
+      preLoaderRoute: typeof DashboardResultsRouteImport
+      parentRoute: typeof DashboardRoute
+    }
     '/dashboard/questionnaires': {
       id: '/dashboard/questionnaires'
       path: '/questionnaires'
@@ -124,16 +192,59 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof DashboardQuestionnairesRouteImport
       parentRoute: typeof DashboardRoute
     }
+    '/dashboard/results/$sessionId': {
+      id: '/dashboard/results/$sessionId'
+      path: '/$sessionId'
+      fullPath: '/dashboard/results/$sessionId'
+      preLoaderRoute: typeof DashboardResultsSessionIdRouteImport
+      parentRoute: typeof DashboardResultsRoute
+    }
+    '/dashboard/questionnaires/$id': {
+      id: '/dashboard/questionnaires/$id'
+      path: '/$id'
+      fullPath: '/dashboard/questionnaires/$id'
+      preLoaderRoute: typeof DashboardQuestionnairesIdRouteImport
+      parentRoute: typeof DashboardQuestionnairesRoute
+    }
   }
 }
 
+interface DashboardQuestionnairesRouteChildren {
+  DashboardQuestionnairesIdRoute: typeof DashboardQuestionnairesIdRoute
+}
+
+const DashboardQuestionnairesRouteChildren: DashboardQuestionnairesRouteChildren =
+  {
+    DashboardQuestionnairesIdRoute: DashboardQuestionnairesIdRoute,
+  }
+
+const DashboardQuestionnairesRouteWithChildren =
+  DashboardQuestionnairesRoute._addFileChildren(
+    DashboardQuestionnairesRouteChildren,
+  )
+
+interface DashboardResultsRouteChildren {
+  DashboardResultsSessionIdRoute: typeof DashboardResultsSessionIdRoute
+}
+
+const DashboardResultsRouteChildren: DashboardResultsRouteChildren = {
+  DashboardResultsSessionIdRoute: DashboardResultsSessionIdRoute,
+}
+
+const DashboardResultsRouteWithChildren =
+  DashboardResultsRoute._addFileChildren(DashboardResultsRouteChildren)
+
 interface DashboardRouteChildren {
-  DashboardQuestionnairesRoute: typeof DashboardQuestionnairesRoute
+  DashboardQuestionnairesRoute: typeof DashboardQuestionnairesRouteWithChildren
+  DashboardResultsRoute: typeof DashboardResultsRouteWithChildren
+  DashboardStudentsRoute: typeof DashboardStudentsRoute
   DashboardIndexRoute: typeof DashboardIndexRoute
 }
 
 const DashboardRouteChildren: DashboardRouteChildren = {
-  DashboardQuestionnairesRoute: DashboardQuestionnairesRoute,
+  DashboardQuestionnairesRoute: DashboardQuestionnairesRouteWithChildren,
+  DashboardResultsRoute: DashboardResultsRouteWithChildren,
+  DashboardStudentsRoute: DashboardStudentsRoute,
   DashboardIndexRoute: DashboardIndexRoute,
 }
 
