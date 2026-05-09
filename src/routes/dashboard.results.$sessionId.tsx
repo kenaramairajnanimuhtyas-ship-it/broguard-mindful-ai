@@ -100,7 +100,10 @@ function Detail() {
             <p className="text-sm text-muted-foreground">{data.student_class || "-"} · NIS {data.student_nis || "-"}</p>
             <p className="mt-1 text-sm">Kuesioner: <span className="font-medium">{data.questionnaire?.title}</span></p>
           </div>
-          <Button size="sm" variant="outline" onClick={reanalyze} disabled={busy} className="gap-2">{busy ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <Sparkles className="h-3.5 w-3.5" />} Analisis ulang</Button>
+          <div className="flex flex-wrap gap-2">
+            <Button size="sm" variant="outline" onClick={exportPDF} className="gap-2"><Download className="h-3.5 w-3.5" /> Ekspor PDF</Button>
+            <Button size="sm" variant="outline" onClick={reanalyze} disabled={busy} className="gap-2">{busy ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <Sparkles className="h-3.5 w-3.5" />} Analisis ulang</Button>
+          </div>
         </div>
       </Card>
 
