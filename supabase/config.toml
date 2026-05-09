@@ -1,0 +1,7 @@
+project_id = "timrkbnerjwzbulhlubr"
+
+[functions.generate-questionnaire]
+verify_jwt = false
+
+[functions.analyze-session]
+verify_jwt = false

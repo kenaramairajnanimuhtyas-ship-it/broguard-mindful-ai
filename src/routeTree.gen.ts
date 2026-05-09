@@ -9,38 +9,179 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as DashboardRouteImport } from './routes/dashboard'
+import { Route as AuthRouteImport } from './routes/auth'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as DashboardIndexRouteImport } from './routes/dashboard.index'
+import { Route as QCodeRouteImport } from './routes/q.$code'
+import { Route as DashboardStudentsRouteImport } from './routes/dashboard.students'
+import { Route as DashboardResultsRouteImport } from './routes/dashboard.results'
+import { Route as DashboardQuestionnairesRouteImport } from './routes/dashboard.questionnaires'
+import { Route as QCodeDoneRouteImport } from './routes/q.$code.done'
+import { Route as DashboardResultsSessionIdRouteImport } from './routes/dashboard.results.$sessionId'
+import { Route as DashboardQuestionnairesIdRouteImport } from './routes/dashboard.questionnaires.$id'
 
+const DashboardRoute = DashboardRouteImport.update({
+  id: '/dashboard',
+  path: '/dashboard',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AuthRoute = AuthRouteImport.update({
+  id: '/auth',
+  path: '/auth',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const DashboardIndexRoute = DashboardIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => DashboardRoute,
+} as any)
+const QCodeRoute = QCodeRouteImport.update({
+  id: '/q/$code',
+  path: '/q/$code',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const DashboardStudentsRoute = DashboardStudentsRouteImport.update({
+  id: '/students',
+  path: '/students',
+  getParentRoute: () => DashboardRoute,
+} as any)
+const DashboardResultsRoute = DashboardResultsRouteImport.update({
+  id: '/results',
+  path: '/results',
+  getParentRoute: () => DashboardRoute,
+} as any)
+const DashboardQuestionnairesRoute = DashboardQuestionnairesRouteImport.update({
+  id: '/questionnaires',
+  path: '/questionnaires',
+  getParentRoute: () => DashboardRoute,
+} as any)
+const QCodeDoneRoute = QCodeDoneRouteImport.update({
+  id: '/done',
+  path: '/done',
+  getParentRoute: () => QCodeRoute,
+} as any)
+const DashboardResultsSessionIdRoute =
+  DashboardResultsSessionIdRouteImport.update({
+    id: '/$sessionId',
+    path: '/$sessionId',
+    getParentRoute: () => DashboardResultsRoute,
+  } as any)
+const DashboardQuestionnairesIdRoute =
+  DashboardQuestionnairesIdRouteImport.update({
+    id: '/$id',
+    path: '/$id',
+    getParentRoute: () => DashboardQuestionnairesRoute,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/auth': typeof AuthRoute
+  '/dashboard': typeof DashboardRouteWithChildren
+  '/dashboard/questionnaires': typeof DashboardQuestionnairesRouteWithChildren
+  '/dashboard/results': typeof DashboardResultsRouteWithChildren
+  '/dashboard/students': typeof DashboardStudentsRoute
+  '/q/$code': typeof QCodeRouteWithChildren
+  '/dashboard/': typeof DashboardIndexRoute
+  '/dashboard/questionnaires/$id': typeof DashboardQuestionnairesIdRoute
+  '/dashboard/results/$sessionId': typeof DashboardResultsSessionIdRoute
+  '/q/$code/done': typeof QCodeDoneRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/auth': typeof AuthRoute
+  '/dashboard/questionnaires': typeof DashboardQuestionnairesRouteWithChildren
+  '/dashboard/results': typeof DashboardResultsRouteWithChildren
+  '/dashboard/students': typeof DashboardStudentsRoute
+  '/q/$code': typeof QCodeRouteWithChildren
+  '/dashboard': typeof DashboardIndexRoute
+  '/dashboard/questionnaires/$id': typeof DashboardQuestionnairesIdRoute
+  '/dashboard/results/$sessionId': typeof DashboardResultsSessionIdRoute
+  '/q/$code/done': typeof QCodeDoneRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/auth': typeof AuthRoute
+  '/dashboard': typeof DashboardRouteWithChildren
+  '/dashboard/questionnaires': typeof DashboardQuestionnairesRouteWithChildren
+  '/dashboard/results': typeof DashboardResultsRouteWithChildren
+  '/dashboard/students': typeof DashboardStudentsRoute
+  '/q/$code': typeof QCodeRouteWithChildren
+  '/dashboard/': typeof DashboardIndexRoute
+  '/dashboard/questionnaires/$id': typeof DashboardQuestionnairesIdRoute
+  '/dashboard/results/$sessionId': typeof DashboardResultsSessionIdRoute
+  '/q/$code/done': typeof QCodeDoneRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/'
+  fullPaths:
+    | '/'
+    | '/auth'
+    | '/dashboard'
+    | '/dashboard/questionnaires'
+    | '/dashboard/results'
+    | '/dashboard/students'
+    | '/q/$code'
+    | '/dashboard/'
+    | '/dashboard/questionnaires/$id'
+    | '/dashboard/results/$sessionId'
+    | '/q/$code/done'
   fileRoutesByTo: FileRoutesByTo
-  to: '/'
-  id: '__root__' | '/'
+  to:
+    | '/'
+    | '/auth'
+    | '/dashboard/questionnaires'
+    | '/dashboard/results'
+    | '/dashboard/students'
+    | '/q/$code'
+    | '/dashboard'
+    | '/dashboard/questionnaires/$id'
+    | '/dashboard/results/$sessionId'
+    | '/q/$code/done'
+  id:
+    | '__root__'
+    | '/'
+    | '/auth'
+    | '/dashboard'
+    | '/dashboard/questionnaires'
+    | '/dashboard/results'
+    | '/dashboard/students'
+    | '/q/$code'
+    | '/dashboard/'
+    | '/dashboard/questionnaires/$id'
+    | '/dashboard/results/$sessionId'
+    | '/q/$code/done'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  AuthRoute: typeof AuthRoute
+  DashboardRoute: typeof DashboardRouteWithChildren
+  QCodeRoute: typeof QCodeRouteWithChildren
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/dashboard': {
+      id: '/dashboard'
+      path: '/dashboard'
+      fullPath: '/dashboard'
+      preLoaderRoute: typeof DashboardRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/auth': {
+      id: '/auth'
+      path: '/auth'
+      fullPath: '/auth'
+      preLoaderRoute: typeof AuthRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/': {
       id: '/'
       path: '/'
@@ -48,22 +189,124 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/dashboard/': {
+      id: '/dashboard/'
+      path: '/'
+      fullPath: '/dashboard/'
+      preLoaderRoute: typeof DashboardIndexRouteImport
+      parentRoute: typeof DashboardRoute
+    }
+    '/q/$code': {
+      id: '/q/$code'
+      path: '/q/$code'
+      fullPath: '/q/$code'
+      preLoaderRoute: typeof QCodeRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/dashboard/students': {
+      id: '/dashboard/students'
+      path: '/students'
+      fullPath: '/dashboard/students'
+      preLoaderRoute: typeof DashboardStudentsRouteImport
+      parentRoute: typeof DashboardRoute
+    }
+    '/dashboard/results': {
+      id: '/dashboard/results'
+      path: '/results'
+      fullPath: '/dashboard/results'
+      preLoaderRoute: typeof DashboardResultsRouteImport
+      parentRoute: typeof DashboardRoute
+    }
+    '/dashboard/questionnaires': {
+      id: '/dashboard/questionnaires'
+      path: '/questionnaires'
+      fullPath: '/dashboard/questionnaires'
+      preLoaderRoute: typeof DashboardQuestionnairesRouteImport
+      parentRoute: typeof DashboardRoute
+    }
+    '/q/$code/done': {
+      id: '/q/$code/done'
+      path: '/done'
+      fullPath: '/q/$code/done'
+      preLoaderRoute: typeof QCodeDoneRouteImport
+      parentRoute: typeof QCodeRoute
+    }
+    '/dashboard/results/$sessionId': {
+      id: '/dashboard/results/$sessionId'
+      path: '/$sessionId'
+      fullPath: '/dashboard/results/$sessionId'
+      preLoaderRoute: typeof DashboardResultsSessionIdRouteImport
+      parentRoute: typeof DashboardResultsRoute
+    }
+    '/dashboard/questionnaires/$id': {
+      id: '/dashboard/questionnaires/$id'
+      path: '/$id'
+      fullPath: '/dashboard/questionnaires/$id'
+      preLoaderRoute: typeof DashboardQuestionnairesIdRouteImport
+      parentRoute: typeof DashboardQuestionnairesRoute
+    }
   }
 }
 
+interface DashboardQuestionnairesRouteChildren {
+  DashboardQuestionnairesIdRoute: typeof DashboardQuestionnairesIdRoute
+}
+
+const DashboardQuestionnairesRouteChildren: DashboardQuestionnairesRouteChildren =
+  {
+    DashboardQuestionnairesIdRoute: DashboardQuestionnairesIdRoute,
+  }
+
+const DashboardQuestionnairesRouteWithChildren =
+  DashboardQuestionnairesRoute._addFileChildren(
+    DashboardQuestionnairesRouteChildren,
+  )
+
+interface DashboardResultsRouteChildren {
+  DashboardResultsSessionIdRoute: typeof DashboardResultsSessionIdRoute
+}
+
+const DashboardResultsRouteChildren: DashboardResultsRouteChildren = {
+  DashboardResultsSessionIdRoute: DashboardResultsSessionIdRoute,
+}
+
+const DashboardResultsRouteWithChildren =
+  DashboardResultsRoute._addFileChildren(DashboardResultsRouteChildren)
+
+interface DashboardRouteChildren {
+  DashboardQuestionnairesRoute: typeof DashboardQuestionnairesRouteWithChildren
+  DashboardResultsRoute: typeof DashboardResultsRouteWithChildren
+  DashboardStudentsRoute: typeof DashboardStudentsRoute
+  DashboardIndexRoute: typeof DashboardIndexRoute
+}
+
+const DashboardRouteChildren: DashboardRouteChildren = {
+  DashboardQuestionnairesRoute: DashboardQuestionnairesRouteWithChildren,
+  DashboardResultsRoute: DashboardResultsRouteWithChildren,
+  DashboardStudentsRoute: DashboardStudentsRoute,
+  DashboardIndexRoute: DashboardIndexRoute,
+}
+
+const DashboardRouteWithChildren = DashboardRoute._addFileChildren(
+  DashboardRouteChildren,
+)
+
+interface QCodeRouteChildren {
+  QCodeDoneRoute: typeof QCodeDoneRoute
+}
+
+const QCodeRouteChildren: QCodeRouteChildren = {
+  QCodeDoneRoute: QCodeDoneRoute,
+}
+
+const QCodeRouteWithChildren = QCodeRoute._addFileChildren(QCodeRouteChildren)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  AuthRoute: AuthRoute,
+  DashboardRoute: DashboardRouteWithChildren,
+  QCodeRoute: QCodeRouteWithChildren,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
-
-import type { getRouter } from './router.tsx'
-import type { startInstance } from './start.ts'
-declare module '@tanstack/react-start' {
-  interface Register {
-    ssr: true
-    router: Awaited<ReturnType<typeof getRouter>>
-    config: Awaited<ReturnType<typeof startInstance.getOptions>>
-  }
-}
