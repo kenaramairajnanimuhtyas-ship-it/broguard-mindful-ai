@@ -111,11 +111,25 @@ function QDetail() {
 
       <Card className="bg-card-gradient p-6 shadow-card">
         <div className="flex flex-wrap items-start justify-between gap-3">
-          <div>
-            <h1 className="font-display text-2xl font-bold">{q.title}</h1>
-            <p className="mt-1 text-sm text-muted-foreground">{q.description}</p>
+          <div className="min-w-0 flex-1">
+            {editMeta ? (
+              <div className="space-y-2">
+                <Input value={metaTitle} onChange={e=>setMetaTitle(e.target.value)} className="font-display text-xl font-bold" />
+                <Textarea value={metaDesc} onChange={e=>setMetaDesc(e.target.value)} rows={2} />
+                <div className="flex gap-2">
+                  <Button size="sm" onClick={saveMeta} className="gap-1"><Save className="h-3.5 w-3.5" /> Simpan</Button>
+                  <Button size="sm" variant="ghost" onClick={()=>setEditMeta(false)}>Batal</Button>
+                </div>
+              </div>
+            ) : (
+              <>
+                <h1 className="font-display text-2xl font-bold">{q.title}</h1>
+                <p className="mt-1 text-sm text-muted-foreground">{q.description}</p>
+              </>
+            )}
           </div>
           <div className="flex items-center gap-2">
+            {!editMeta && <Button size="sm" variant="ghost" onClick={()=>{ setMetaTitle(q.title); setMetaDesc(q.description||""); setEditMeta(true); }}><Pencil className="h-4 w-4" /></Button>}
             <code className="rounded-lg bg-background px-3 py-1.5 text-base font-semibold tracking-wider">{q.access_code}</code>
             <Button size="sm" variant="ghost" onClick={copyLink}><Copy className="h-4 w-4" /></Button>
             <Button size="sm" variant="outline" onClick={toggleStatus}>{q.status === "active" ? "Nonaktifkan" : "Aktifkan"}</Button>
