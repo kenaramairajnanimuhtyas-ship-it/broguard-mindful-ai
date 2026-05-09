@@ -60,12 +60,6 @@ function QDetail() {
     await load();
   }
 
-  async function delQuestion(qid: string) {
-    if (!confirm("Hapus soal ini?")) return;
-    await supabase.from("questions").delete().eq("id", qid);
-    await load();
-  }
-
   function startEdit(qq: any) {
     setEditingId(qq.id);
     setEditText(qq.text);
