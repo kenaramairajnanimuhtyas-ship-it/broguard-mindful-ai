@@ -4,8 +4,10 @@ import { supabase } from "@/integrations/supabase/client";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { riskBadge } from "@/lib/broguard";
-import { ArrowLeft, Loader2, Sparkles } from "lucide-react";
+import { ArrowLeft, Loader2, Sparkles, Download } from "lucide-react";
 import { toast } from "sonner";
+import { jsPDF } from "jspdf";
+import { format } from "date-fns";
 
 export const Route = createFileRoute("/dashboard/results/$sessionId")({ component: Detail });
 
