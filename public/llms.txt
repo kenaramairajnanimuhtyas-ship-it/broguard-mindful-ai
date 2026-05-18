@@ -1,0 +1,10 @@
+# BroGuardAI
+
+> Sistem cerdas berbasis data mining & AI untuk membantu guru BK mendeteksi dini risiko psikologis siswa lewat kuesioner adaptif yang dianalisis otomatis.
+
+BroGuardAI adalah platform untuk guru Bimbingan dan Konseling (BK) di sekolah Indonesia. Guru membuat kuesioner (pilihan ganda + esai) — dibantu AI atau manual — lalu siswa mengisi melalui kode akses. AI menganalisis jawaban, menghasilkan skor risiko 0–100, tingkat keparahan, dan rekomendasi tindak lanjut yang empatik.
+
+## Pages
+
+- [Beranda](/): Penjelasan produk, akses kuesioner siswa via kode, dan masuk untuk guru BK.
+- [Masuk Guru BK](/auth): Halaman login dan pendaftaran akun guru BK.

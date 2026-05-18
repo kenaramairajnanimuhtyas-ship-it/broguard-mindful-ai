@@ -9,6 +9,7 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
 import { Route as DashboardRouteImport } from './routes/dashboard'
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as IndexRouteImport } from './routes/index'
@@ -21,6 +22,11 @@ import { Route as QCodeDoneRouteImport } from './routes/q.$code.done'
 import { Route as DashboardResultsSessionIdRouteImport } from './routes/dashboard.results.$sessionId'
 import { Route as DashboardQuestionnairesIdRouteImport } from './routes/dashboard.questionnaires.$id'
 
+const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
+  id: '/sitemap.xml',
+  path: '/sitemap.xml',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const DashboardRoute = DashboardRouteImport.update({
   id: '/dashboard',
   path: '/dashboard',
@@ -83,6 +89,7 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
   '/dashboard': typeof DashboardRouteWithChildren
+  '/sitemap.xml': typeof SitemapDotxmlRoute
   '/dashboard/questionnaires': typeof DashboardQuestionnairesRouteWithChildren
   '/dashboard/results': typeof DashboardResultsRouteWithChildren
   '/dashboard/students': typeof DashboardStudentsRoute
@@ -95,6 +102,7 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
+  '/sitemap.xml': typeof SitemapDotxmlRoute
   '/dashboard/questionnaires': typeof DashboardQuestionnairesRouteWithChildren
   '/dashboard/results': typeof DashboardResultsRouteWithChildren
   '/dashboard/students': typeof DashboardStudentsRoute
@@ -109,6 +117,7 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
   '/dashboard': typeof DashboardRouteWithChildren
+  '/sitemap.xml': typeof SitemapDotxmlRoute
   '/dashboard/questionnaires': typeof DashboardQuestionnairesRouteWithChildren
   '/dashboard/results': typeof DashboardResultsRouteWithChildren
   '/dashboard/students': typeof DashboardStudentsRoute
@@ -124,6 +133,7 @@ export interface FileRouteTypes {
     | '/'
     | '/auth'
     | '/dashboard'
+    | '/sitemap.xml'
     | '/dashboard/questionnaires'
     | '/dashboard/results'
     | '/dashboard/students'
@@ -136,6 +146,7 @@ export interface FileRouteTypes {
   to:
     | '/'
     | '/auth'
+    | '/sitemap.xml'
     | '/dashboard/questionnaires'
     | '/dashboard/results'
     | '/dashboard/students'
@@ -149,6 +160,7 @@ export interface FileRouteTypes {
     | '/'
     | '/auth'
     | '/dashboard'
+    | '/sitemap.xml'
     | '/dashboard/questionnaires'
     | '/dashboard/results'
     | '/dashboard/students'
@@ -163,11 +175,19 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AuthRoute: typeof AuthRoute
   DashboardRoute: typeof DashboardRouteWithChildren
+  SitemapDotxmlRoute: typeof SitemapDotxmlRoute
   QCodeRoute: typeof QCodeRouteWithChildren
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/sitemap.xml': {
+      id: '/sitemap.xml'
+      path: '/sitemap.xml'
+      fullPath: '/sitemap.xml'
+      preLoaderRoute: typeof SitemapDotxmlRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/dashboard': {
       id: '/dashboard'
       path: '/dashboard'
@@ -305,8 +325,19 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AuthRoute: AuthRoute,
   DashboardRoute: DashboardRouteWithChildren,
+  SitemapDotxmlRoute: SitemapDotxmlRoute,
   QCodeRoute: QCodeRouteWithChildren,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
+
+import type { getRouter } from './router.tsx'
+import type { startInstance } from './start.ts'
+declare module '@tanstack/react-start' {
+  interface Register {
+    ssr: true
+    router: Awaited<ReturnType<typeof getRouter>>
+    config: Awaited<ReturnType<typeof startInstance.getOptions>>
+  }
+}
