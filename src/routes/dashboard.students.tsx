@@ -81,7 +81,7 @@ function Students() {
                   <td className="p-3 text-muted-foreground">{s.nis || "-"}</td>
                   <td className="p-3">{s.class_name || "-"}</td>
                   <td className="p-3">{s.gender || "-"}</td>
-                  <td className="p-3 text-right"><Button size="icon" variant="ghost" onClick={()=>del(s.id)}><Trash2 className="h-4 w-4 text-destructive" /></Button></td>
+                  <td className="p-3 text-right"><Button size="icon" variant="ghost" onClick={()=>del(s.id)} aria-label={`Hapus siswa ${s.full_name}`}><Trash2 className="h-4 w-4 text-destructive" /></Button></td>
                 </tr>
               ))}
               {filtered.length === 0 && <tr><td colSpan={5} className="p-10 text-center text-muted-foreground">Belum ada siswa.</td></tr>}

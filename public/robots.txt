@@ -1,0 +1,7 @@
+User-agent: *
+Allow: /
+Disallow: /dashboard
+Disallow: /auth
+Disallow: /q/
+
+Sitemap: https://broguard-mindful-ai.lovable.app/sitemap.xml

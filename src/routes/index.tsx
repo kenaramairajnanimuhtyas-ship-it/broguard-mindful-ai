@@ -2,11 +2,52 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
-import { Brain, Shield, Sparkles, HeartHandshake, FileQuestion, BarChart3, ArrowRight } from "lucide-react";
+import { Brain, Shield, Sparkles, HeartHandshake, FileQuestion, ArrowRight } from "lucide-react";
 import { useNavigate } from "@tanstack/react-router";
 import { useState } from "react";
 
-export const Route = createFileRoute("/")({ component: Landing });
+const SITE_URL = "https://broguard-mindful-ai.lovable.app";
+const OG_IMAGE = "https://storage.googleapis.com/gpt-engineer-file-uploads/WdkAge1xJDgmFvM0yTgYBADQtvs2/social-images/social-1778295411055-__Hello__we_are_BroCode.idKami_hadir_untuk_membantu_kamu_membangun_website_yang-__Modern__Cep-removebg-preview.webp";
+
+export const Route = createFileRoute("/")({
+  component: Landing,
+  head: () => ({
+    meta: [
+      { title: "BroGuardAI — Deteksi Dini Risiko Psikologis Siswa" },
+      { name: "description", content: "Platform AI untuk guru BK mendeteksi dini risiko psikologis siswa lewat kuesioner adaptif. Skor risiko, indikator, & rekomendasi tindak lanjut empatik." },
+      { property: "og:title", content: "BroGuardAI — Pendamping cerdas kesehatan mental siswa" },
+      { property: "og:description", content: "Bantu siswa Indonesia lewat kuesioner BK adaptif yang dianalisis AI: skor risiko 0–100, indikator, dan rekomendasi tindak lanjut." },
+      { property: "og:url", content: `${SITE_URL}/` },
+      { property: "og:type", content: "website" },
+      { property: "og:image", content: OG_IMAGE },
+    ],
+    links: [{ rel: "canonical", href: `${SITE_URL}/` }],
+    scripts: [
+      {
+        type: "application/ld+json",
+        children: JSON.stringify({
+          "@context": "https://schema.org",
+          "@type": "WebSite",
+          name: "BroGuardAI",
+          url: SITE_URL,
+          description: "Platform AI untuk guru BK mendeteksi dini risiko psikologis siswa lewat kuesioner adaptif.",
+          inLanguage: "id-ID",
+        }),
+      },
+      {
+        type: "application/ld+json",
+        children: JSON.stringify({
+          "@context": "https://schema.org",
+          "@type": "Organization",
+          name: "BroGuardAI",
+          url: SITE_URL,
+          logo: `${SITE_URL}/favicon.ico`,
+          description: "Sistem cerdas berbasis data mining & AI untuk membantu guru BK mendeteksi dini risiko psikologis siswa di Indonesia.",
+        }),
+      },
+    ],
+  }),
+});
 
 function Landing() {
   const navigate = useNavigate();
@@ -26,6 +67,7 @@ function Landing() {
         </nav>
       </header>
 
+      <main>
       <section className="mx-auto max-w-6xl px-6 pb-16 pt-8 md:pt-16">
         <div className="grid items-center gap-10 md:grid-cols-2">
           <div>
@@ -48,7 +90,7 @@ function Landing() {
                 className="flex gap-2"
                 onSubmit={(e) => { e.preventDefault(); if (code.trim()) navigate({ to: "/q/$code", params: { code: code.trim().toUpperCase() } }); }}
               >
-                <Input value={code} onChange={(e) => setCode(e.target.value.toUpperCase())} placeholder="Masukkan kode (mis. AB12CD)" className="bg-background uppercase" maxLength={10} />
+                <Input value={code} onChange={(e) => setCode(e.target.value.toUpperCase())} placeholder="Masukkan kode (mis. AB12CD)" className="bg-background uppercase" maxLength={10} aria-label="Kode kuesioner" />
                 <Button type="submit" variant="secondary">Lanjut</Button>
               </form>
             </Card>
@@ -82,6 +124,7 @@ function Landing() {
           <Feature icon={HeartHandshake} title="Rekomendasi tindak lanjut" desc="Saran konkret untuk konseling, observasi, dan komunikasi dengan orang tua." />
         </div>
       </section>
+      </main>
 
       <footer className="border-t border-border/60 py-8 text-center text-xs text-muted-foreground">
         © {new Date().getFullYear()} BroGuardAI · Dibangun dengan empati untuk siswa Indonesia.
@@ -103,7 +146,7 @@ function Feature({ icon: Icon, title, desc }: any) {
   return (
     <Card className="bg-card-gradient p-6 shadow-card">
       <div className="mb-3 grid h-11 w-11 place-items-center rounded-xl bg-primary/15 text-primary"><Icon className="h-5 w-5" /></div>
-      <h3 className="font-display text-lg font-semibold">{title}</h3>
+      <h2 className="font-display text-lg font-semibold">{title}</h2>
       <p className="mt-1 text-sm text-muted-foreground">{desc}</p>
     </Card>
   );
