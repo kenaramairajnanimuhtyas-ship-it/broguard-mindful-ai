@@ -10,7 +10,23 @@ import { useAuth } from "@/hooks/use-auth";
 import { Shield } from "lucide-react";
 import { toast } from "sonner";
 
-export const Route = createFileRoute("/auth")({ component: AuthPage });
+const SITE_URL = "https://broguard-mindful-ai.lovable.app";
+
+export const Route = createFileRoute("/auth")({
+  component: AuthPage,
+  head: () => ({
+    meta: [
+      { title: "Masuk Guru BK — BroGuardAI" },
+      { name: "description", content: "Masuk atau daftar akun guru BK untuk mengelola kuesioner deteksi risiko psikologis siswa dan melihat analisis AI di BroGuardAI." },
+      { name: "robots", content: "noindex, follow" },
+      { property: "og:title", content: "Masuk Guru BK — BroGuardAI" },
+      { property: "og:description", content: "Akses panel guru BK BroGuardAI untuk mengelola kuesioner dan melihat analisis risiko psikologis siswa." },
+      { property: "og:url", content: `${SITE_URL}/auth` },
+      { property: "og:type", content: "website" },
+    ],
+    links: [{ rel: "canonical", href: `${SITE_URL}/auth` }],
+  }),
+});
 
 function AuthPage() {
   const navigate = useNavigate();
@@ -45,12 +61,13 @@ function AuthPage() {
   }
 
   return (
-    <div className="flex min-h-screen items-center justify-center p-6">
+    <main className="flex min-h-screen items-center justify-center p-6">
       <div className="w-full max-w-md">
         <Link to="/" className="mb-6 flex items-center justify-center gap-2">
           <div className="grid h-10 w-10 place-items-center rounded-xl bg-primary text-primary-foreground shadow-soft"><Shield className="h-5 w-5" /></div>
           <span className="font-display text-2xl font-bold">BroGuardAI</span>
         </Link>
+        <h1 className="mb-4 text-center font-display text-2xl font-bold">Masuk ke BroGuardAI</h1>
         <Card className="bg-card-gradient p-6 shadow-soft">
           <Tabs defaultValue="login">
             <TabsList className="grid w-full grid-cols-2">
@@ -76,6 +93,6 @@ function AuthPage() {
           </Tabs>
         </Card>
       </div>
-    </div>
+    </main>
   );
 }
