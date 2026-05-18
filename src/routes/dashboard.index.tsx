@@ -5,7 +5,16 @@ import { Card } from "@/components/ui/card";
 import { Users, FileQuestion, Activity, AlertTriangle } from "lucide-react";
 import { riskBadge } from "@/lib/broguard";
 
-export const Route = createFileRoute("/dashboard/")({ component: Overview });
+export const Route = createFileRoute("/dashboard/")({
+  component: Overview,
+  head: () => ({
+    meta: [
+      { title: "Ringkasan Panel Guru BK — BroGuardAI" },
+      { name: "description", content: "Ringkasan aktivitas BroGuardAI: jumlah siswa, kuesioner, sesi pengisian, dan prioritas penanganan risiko psikologis per kelas." },
+      { name: "robots", content: "noindex, follow" },
+    ],
+  }),
+});
 
 type ClassRow = { className: string; total: number; avg: number; rendah: number; sedang: number; tinggi: number; sangat_tinggi: number };
 
@@ -44,7 +53,7 @@ function Overview() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="font-display text-3xl font-bold">Beranda</h1>
+        <h1 className="font-display text-3xl font-bold">Ringkasan Panel Guru BK</h1>
         <p className="text-muted-foreground">Ringkasan aktivitas BroGuardAI di sekolah Anda.</p>
       </div>
 

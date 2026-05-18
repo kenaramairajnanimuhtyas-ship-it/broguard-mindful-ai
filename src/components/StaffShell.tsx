@@ -75,7 +75,7 @@ export function StaffShell() {
           <Link to="/" className="flex items-center gap-2 font-display text-lg font-bold">
             <Shield className="h-5 w-5 text-primary" /> BroGuardAI
           </Link>
-          <Button size="sm" variant="ghost" onClick={signOut}><LogOut className="h-4 w-4" /></Button>
+          <Button size="sm" variant="ghost" onClick={signOut} aria-label="Keluar dari akun"><LogOut className="h-4 w-4" /></Button>
         </header>
         <main className="mx-auto max-w-6xl p-4 md:p-8">
           <Outlet />

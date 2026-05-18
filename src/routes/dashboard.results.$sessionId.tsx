@@ -113,9 +113,9 @@ function Detail() {
             <span className={`rounded-full border px-3 py-1 text-sm font-semibold ${b!.cls}`}>{b!.label}</span>
             <span className="text-3xl font-bold">{a.risk_score}<span className="text-base text-muted-foreground">/100</span></span>
           </div>
-          <h3 className="mt-5 font-display text-lg font-semibold">Ringkasan</h3>
+          <h2 className="mt-5 font-display text-lg font-semibold">Ringkasan</h2>
           <p className="mt-1 whitespace-pre-wrap text-sm">{a.summary}</p>
-          <h3 className="mt-5 font-display text-lg font-semibold">Rekomendasi</h3>
+          <h2 className="mt-5 font-display text-lg font-semibold">Rekomendasi</h2>
           <p className="mt-1 whitespace-pre-wrap text-sm">{a.recommendations}</p>
         </Card>
       ) : (
@@ -123,7 +123,7 @@ function Detail() {
       )}
 
       <Card className="bg-card-gradient p-6 shadow-card">
-        <h3 className="mb-4 font-display text-lg font-semibold">Jawaban siswa</h3>
+        <h2 className="mb-4 font-display text-lg font-semibold">Jawaban siswa</h2>
         <div className="space-y-4">
           {responses.map((r:any, i:number) => (
             <div key={i} className="rounded-xl bg-background/60 p-4">

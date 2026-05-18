@@ -127,9 +127,9 @@ function Questionnaires() {
             </div>
             <div className="mt-4 flex items-center gap-2">
               <code className="rounded-lg bg-background px-2 py-1 text-sm font-semibold tracking-wider">{q.access_code}</code>
-              <Button size="sm" variant="ghost" onClick={() => copyLink(q.access_code)}><Copy className="h-3.5 w-3.5" /></Button>
-              <a href={`/q/${q.access_code}`} target="_blank" rel="noreferrer">
-                <Button size="sm" variant="ghost"><ExternalLink className="h-3.5 w-3.5" /></Button>
+              <Button size="sm" variant="ghost" onClick={() => copyLink(q.access_code)} aria-label={`Salin link kuesioner ${q.title}`}><Copy className="h-3.5 w-3.5" /></Button>
+              <a href={`/q/${q.access_code}`} target="_blank" rel="noreferrer" aria-label={`Buka kuesioner ${q.title} di tab baru`}>
+                <Button size="sm" variant="ghost" aria-label={`Buka kuesioner ${q.title} di tab baru`}><ExternalLink className="h-3.5 w-3.5" /></Button>
               </a>
               <span className="ml-auto text-xs text-muted-foreground">{q.sessions?.[0]?.count ?? 0} sesi</span>
             </div>
